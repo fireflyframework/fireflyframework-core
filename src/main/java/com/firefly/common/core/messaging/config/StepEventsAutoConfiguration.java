@@ -16,9 +16,9 @@
 
 package com.firefly.common.core.messaging.config;
 
-import com.firefly.common.core.messaging.publisher.EventPublisherFactory;
 import com.firefly.common.core.messaging.stepevents.StepEventPublisherBridge;
-import com.firefly.transactional.events.StepEventPublisher;
+import com.firefly.common.eda.publisher.EventPublisherFactory;
+import com.firefly.transactional.saga.events.StepEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

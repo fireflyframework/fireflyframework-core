@@ -16,11 +16,11 @@
 
 package com.firefly.common.core.messaging.stepevents;
 
-import com.firefly.common.core.messaging.annotation.PublisherType;
-import com.firefly.common.core.messaging.publisher.EventPublisher;
-import com.firefly.common.core.messaging.publisher.EventPublisherFactory;
-import com.firefly.transactional.events.StepEventEnvelope;
-import com.firefly.transactional.events.StepEventPublisher;
+import com.firefly.common.eda.annotation.PublisherType;
+import com.firefly.common.eda.publisher.EventPublisher;
+import com.firefly.common.eda.publisher.EventPublisherFactory;
+import com.firefly.transactional.saga.events.StepEventEnvelope;
+import com.firefly.transactional.saga.events.StepEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -85,7 +85,7 @@ public class StepEventPublisherBridge implements StepEventPublisher {
             final PublisherType finalPublisherType = publisherType;
 
             // Publish using the selected publisher
-            return publisher.publish(finalTopic, envelope.getType(), enrichedPayload, transactionId)
+            return publisher.publish(enrichedPayload, finalTopic)
                     .doOnSuccess(v -> log.debug("Successfully published step event via {}: topic={}", 
                                                finalPublisherType, finalTopic))
                     .doOnError(error -> log.error("Failed to publish step event via {}: {}", 

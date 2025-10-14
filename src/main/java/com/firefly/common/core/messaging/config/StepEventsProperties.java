@@ -16,7 +16,7 @@
 
 package com.firefly.common.core.messaging.config;
 
-import com.firefly.common.core.messaging.annotation.PublisherType;
+import com.firefly.common.eda.annotation.PublisherType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -42,9 +42,9 @@ public class StepEventsProperties {
     private String defaultTopic = "step-events";
 
     /**
-     * The type of publisher to use for step events. Defaults to EVENT_BUS for development.
+     * The type of publisher to use for step events. Defaults to AUTO for development.
      */
-    private PublisherType publisherType = PublisherType.EVENT_BUS;
+    private PublisherType publisherType = PublisherType.AUTO;
 
     /**
      * The connection ID to use for the publisher. Defaults to "default".

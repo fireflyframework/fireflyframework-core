@@ -16,10 +16,10 @@
 
 package com.firefly.common.core.messaging.stepevents;
 
-import com.firefly.common.core.messaging.annotation.PublisherType;
-import com.firefly.common.core.messaging.publisher.EventPublisher;
-import com.firefly.common.core.messaging.publisher.EventPublisherFactory;
-import com.firefly.transactional.events.StepEventEnvelope;
+import com.firefly.common.eda.annotation.PublisherType;
+import com.firefly.common.eda.publisher.EventPublisher;
+import com.firefly.common.eda.publisher.EventPublisherFactory;
+import com.firefly.transactional.saga.events.StepEventEnvelope;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -94,7 +94,7 @@ class StepEventPublisherBridgeTest {
         // Given: Event publisher is available
         when(eventPublisherFactory.getPublisher(publisherType, connectionId))
             .thenReturn(eventPublisher);
-        when(eventPublisher.publish(anyString(), anyString(), any(), anyString()))
+        when(eventPublisher.publish(any(), anyString()))
             .thenReturn(Mono.empty());
 
         // Given: A money transfer saga step has completed
@@ -120,22 +120,16 @@ class StepEventPublisherBridgeTest {
             .verifyComplete();
 
         // Then: Event publisher should be called with properly transformed event
-        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<StepEventEnvelope> payloadCaptor = ArgumentCaptor.forClass(StepEventEnvelope.class);
-        ArgumentCaptor<String> transactionIdCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
 
         verify(eventPublisher).publish(
-            topicCaptor.capture(),
-            typeCaptor.capture(),
             payloadCaptor.capture(),
-            transactionIdCaptor.capture()
+            topicCaptor.capture()
         );
 
         // Verify basic event properties
         assertThat(topicCaptor.getValue()).isEqualTo(defaultTopic);
-        assertThat(typeCaptor.getValue()).isEqualTo("transfer.step.completed");
-        assertThat(transactionIdCaptor.getValue()).isEqualTo("SAGA-67890:step-1");
 
         // Verify the payload contains the original step event data
         StepEventEnvelope publishedPayload = payloadCaptor.getValue();
@@ -151,7 +145,7 @@ class StepEventPublisherBridgeTest {
         // Given: Event publisher is available
         when(eventPublisherFactory.getPublisher(publisherType, connectionId))
             .thenReturn(eventPublisher);
-        when(eventPublisher.publish(anyString(), anyString(), any(), anyString()))
+        when(eventPublisher.publish(any(), anyString()))
             .thenReturn(Mono.empty());
 
         // Given: A step event without a key
@@ -167,8 +161,8 @@ class StepEventPublisherBridgeTest {
         StepVerifier.create(stepEventBridge.publish(stepEvent))
             .verifyComplete();
 
-        // Then: Key should be auto-generated from saga name and ID
-        verify(eventPublisher).publish(eq(defaultTopic), eq("account.validation.completed"), any(), eq("SAGA-12345:step-1"));
+        // Then: Publisher should be called and key should be auto-generated
+        verify(eventPublisher).publish(any(StepEventEnvelope.class), eq(defaultTopic));
 
         // Verify the step event was modified to include the generated key
         assertThat(stepEvent.getKey()).isEqualTo("AccountOpeningSaga:SAGA-12345");
@@ -180,7 +174,7 @@ class StepEventPublisherBridgeTest {
         // Given: Event publisher is available
         when(eventPublisherFactory.getPublisher(publisherType, connectionId))
             .thenReturn(eventPublisher);
-        when(eventPublisher.publish(anyString(), anyString(), any(), anyString()))
+        when(eventPublisher.publish(any(), anyString()))
             .thenReturn(Mono.empty());
 
         // Given: A step event without a topic
@@ -198,7 +192,7 @@ class StepEventPublisherBridgeTest {
 
         // Then: Default topic should be used
         ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        verify(eventPublisher).publish(topicCaptor.capture(), anyString(), any(), anyString());
+        verify(eventPublisher).publish(any(StepEventEnvelope.class), topicCaptor.capture());
         assertThat(topicCaptor.getValue()).isEqualTo(defaultTopic);
 
         // Verify the step event was modified to include the default topic
@@ -226,7 +220,7 @@ class StepEventPublisherBridgeTest {
             .verifyComplete(); // Should complete without error
 
         // Then: No publisher interaction should occur
-        verify(eventPublisher, org.mockito.Mockito.never()).publish(anyString(), anyString(), any(), anyString());
+        verify(eventPublisher, org.mockito.Mockito.never()).publish(any(), anyString());
     }
 
     @Test
@@ -236,7 +230,7 @@ class StepEventPublisherBridgeTest {
         RuntimeException publisherError = new RuntimeException("Message broker unavailable");
         when(eventPublisherFactory.getPublisher(publisherType, connectionId))
             .thenReturn(eventPublisher);
-        when(eventPublisher.publish(anyString(), anyString(), any(), anyString()))
+        when(eventPublisher.publish(any(), anyString()))
             .thenReturn(Mono.error(publisherError));
 
         StepEventEnvelope stepEvent = createStepEvent(
@@ -253,7 +247,7 @@ class StepEventPublisherBridgeTest {
             .verify();
 
         // Then: Error should be propagated
-        verify(eventPublisher).publish(anyString(), anyString(), any(), anyString());
+        verify(eventPublisher).publish(any(StepEventEnvelope.class), anyString());
     }
 
     @Test
@@ -262,7 +256,7 @@ class StepEventPublisherBridgeTest {
         // Given: Event publisher is available
         when(eventPublisherFactory.getPublisher(publisherType, connectionId))
             .thenReturn(eventPublisher);
-        when(eventPublisher.publish(anyString(), anyString(), any(), anyString()))
+        when(eventPublisher.publish(any(), anyString()))
             .thenReturn(Mono.empty());
 
         // Given: A step event that failed and was retried
@@ -300,7 +294,9 @@ class StepEventPublisherBridgeTest {
 
         // Then: All failure and retry metadata should be preserved in the published payload
         ArgumentCaptor<StepEventEnvelope> payloadCaptor = ArgumentCaptor.forClass(StepEventEnvelope.class);
-        verify(eventPublisher).publish(eq("banking-fraud-events"), eq("fraud.check.failed"), payloadCaptor.capture(), eq("SAGA-FRAUD-001:step-fraud-check"));
+        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
+        verify(eventPublisher).publish(payloadCaptor.capture(), topicCaptor.capture());
+        assertThat(topicCaptor.getValue()).isEqualTo("banking-fraud-events");
 
         StepEventEnvelope publishedPayload = payloadCaptor.getValue();
         assertThat(publishedPayload.getAttempts()).isEqualTo(3);
