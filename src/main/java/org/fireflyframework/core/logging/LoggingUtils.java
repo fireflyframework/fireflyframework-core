@@ -224,7 +224,7 @@ public final class LoggingUtils {
     private static JsonNode processObjectNodeRecursively(JsonNode objectNode, int depth) {
         var objectNodeBuilder = objectMapper.createObjectNode();
         
-        objectNode.fields().forEachRemaining(entry -> {
+        objectNode.properties().forEach(entry -> {
             String key = entry.getKey();
             JsonNode value = entry.getValue();
             JsonNode processedValue = processJsonNodeRecursively(value, depth + 1);
