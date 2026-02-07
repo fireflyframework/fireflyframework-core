@@ -26,10 +26,6 @@ import brave.propagation.B3Propagation;
 import brave.propagation.Propagation;
 import brave.propagation.ThreadLocalCurrentTraceContext;
 import brave.sampler.Sampler;
-import io.micrometer.tracing.Tracer;
-import io.micrometer.tracing.brave.bridge.BraveBaggageManager;
-import io.micrometer.tracing.brave.bridge.BraveCurrentTraceContext;
-import io.micrometer.tracing.brave.bridge.BraveTracer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -118,16 +114,4 @@ public class TracingConfig {
         return Sampler.create((float)actuatorProperties.getTracing().getSampling().getProbability());
     }
 
-    /**
-     * Configures the Brave tracer for distributed tracing.
-     *
-     * @param braveTracer the Brave tracer
-     * @return the Micrometer tracer
-     */
-    @Bean
-    @ConditionalOnClass(name = "brave.Tracer")
-    public Tracer tracer(brave.Tracer braveTracer) {
-        return new BraveTracer(braveTracer, new BraveCurrentTraceContext(currentTraceContext(transactionIdField())),
-                new BraveBaggageManager());
-    }
 }
