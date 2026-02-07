@@ -67,12 +67,22 @@ public class TracingConfig {
 
     /**
      * Configures the propagation factory for distributed tracing.
+     * <p>
+     * This bean is intentionally named differently from Spring Boot's default
+     * {@code propagationFactory} bean to avoid a bean name collision with
+     * {@code BravePropagationConfigurations.PropagationWithBaggage#propagationFactory}.
+     * Since Spring Boot disables bean definition overriding by default, a duplicate
+     * name would prevent the application context from starting.
+     * <p>
+     * Spring Boot's auto-configuration uses {@code @ConditionalOnMissingBean} on the
+     * {@link Propagation.Factory} type, so registering this bean causes the
+     * auto-configured one to back off automatically.
      *
      * @param transactionIdField the transaction ID baggage field
      * @return the propagation factory
      */
     @Bean
-    public Propagation.Factory propagationFactory(BaggageField transactionIdField) {
+    public Propagation.Factory fireflyPropagationFactory(BaggageField transactionIdField) {
         return BaggagePropagation.newFactoryBuilder(B3Propagation.FACTORY)
                 .add(BaggagePropagationConfig.SingleBaggageField.newBuilder(transactionIdField)
                         .addKeyName(TRANSACTION_ID_HEADER)
