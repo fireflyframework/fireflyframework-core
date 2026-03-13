@@ -26,7 +26,7 @@ import io.github.resilience4j.retry.RetryRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -63,7 +63,7 @@ public class WebClientResilienceAutoConfiguration {
      * @return the CircuitBreakerRegistry
      */
     @Bean
-    @ConditionalOnMissingBean(name = "webClientCircuitBreakerRegistry")
+    @Primary
     public CircuitBreakerRegistry webClientCircuitBreakerRegistry() {
         CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
                 .failureRateThreshold(properties.getCircuitBreaker().getFailureRateThreshold())
@@ -82,7 +82,6 @@ public class WebClientResilienceAutoConfiguration {
      */
     @Bean
     @Primary
-    @ConditionalOnMissingBean(name = "webClientRetryRegistry")
     public RetryRegistry webClientRetryRegistry() {
         RetryConfig retryConfig = RetryConfig.custom()
                 .maxAttempts(properties.getRetry().getMaxAttempts())
@@ -99,7 +98,6 @@ public class WebClientResilienceAutoConfiguration {
      * @return the TimeLimiterRegistry
      */
     @Bean
-    @ConditionalOnMissingBean(name = "webClientTimeLimiterRegistry")
     public TimeLimiterRegistry webClientTimeLimiterRegistry() {
         TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
                 .timeoutDuration(Duration.ofMillis(properties.getTimeout().getTimeoutMs()))
@@ -114,7 +112,6 @@ public class WebClientResilienceAutoConfiguration {
      * @return the BulkheadRegistry
      */
     @Bean
-    @ConditionalOnMissingBean(name = "webClientBulkheadRegistry")
     public BulkheadRegistry webClientBulkheadRegistry() {
         BulkheadConfig bulkheadConfig = BulkheadConfig.custom()
                 .maxConcurrentCalls(properties.getBulkhead().getMaxConcurrentCalls())
