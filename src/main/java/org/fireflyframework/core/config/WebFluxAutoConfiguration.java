@@ -53,9 +53,15 @@ public class WebFluxAutoConfiguration implements WebFluxConfigurer {
                 .build();
 
         configurer.defaultCodecs().jackson2JsonEncoder(
-                new Jackson2JsonEncoder(objectMapper, MediaType.APPLICATION_JSON));
+                new Jackson2JsonEncoder(objectMapper,
+                        MediaType.APPLICATION_JSON,
+                        new MediaType("application", "*+json"),
+                        MediaType.APPLICATION_NDJSON));
 
         configurer.defaultCodecs().jackson2JsonDecoder(
-                new Jackson2JsonDecoder(objectMapper, MediaType.APPLICATION_JSON));
+                new Jackson2JsonDecoder(objectMapper,
+                        MediaType.APPLICATION_JSON,
+                        new MediaType("application", "*+json"),
+                        MediaType.APPLICATION_NDJSON));
     }
 }
