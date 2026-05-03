@@ -1,7 +1,7 @@
 # Quick Start Guide
 
 **Firefly Common Core Library**  
-*Copyright (c) 2025 Firefly Software Solutions Inc*  
+*Copyright (c) 2025 Firefly Software Foundation*  
 *Licensed under the Apache License, Version 2.0*
 
 Quick start guide for the Firefly Common Core library - infrastructure components for the **Firefly Framework**.

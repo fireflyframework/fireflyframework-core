@@ -1,7 +1,7 @@
 # Integrations Guide
 
 **Firefly Common Core Library**  
-*Copyright (c) 2025 Firefly Software Solutions Inc*  
+*Copyright (c) 2025 Firefly Software Foundation*  
 *Licensed under the Apache License, Version 2.0*
 
 This guide covers how to integrate Firefly Common Core with various external systems, cloud platforms, and enterprise services.
