@@ -1,5 +1,4 @@
 org.fireflyframework.core.config.FireflyBannerAutoConfiguration
-org.fireflyframework.core.config.WebFluxAutoConfiguration
 org.fireflyframework.core.config.WebClientAutoConfiguration
 org.fireflyframework.core.config.WebClientBuilderCustomizer
 org.fireflyframework.core.config.WebFilterAutoConfiguration
