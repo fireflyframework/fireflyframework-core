@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2026 Firefly Software Solutions Inc
+ * Copyright 2024-2026 Firefly Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import java.io.PrintStream;
  * 
  * The banner includes:
  * - Firefly ASCII art
- * - Copyright 2024-2026 Firefly Software Solutions Inc
+ * - Copyright 2024-2026 Firefly Software Foundation
  * - License Apache 2.0
  * 
  * Configuration is based on spring.banner.location property which defaults to
@@ -149,7 +149,7 @@ public class FireflyBannerAutoConfiguration implements ApplicationListener<Appli
             out.println("| |      _| |_| | \\ \\| |____| |    | |____    | |   ");
             out.println("|_|     |_____|_|  \\_\\______|_|    |______|   |_|   ");
             out.println();
-            out.println("Copyright 2024-2026 Firefly Software Solutions Inc");
+            out.println("Copyright 2024-2026 Firefly Software Foundation");
             out.println("License Apache 2.0");
             out.println();
         }

@@ -1,7 +1,7 @@
 # API Reference
 
 **Firefly Common Core Library**  
-*Copyright (c) 2025 Firefly Software Solutions Inc*  
+*Copyright (c) 2025 Firefly Software Foundation*  
 *Licensed under the Apache License, Version 2.0*
 
 This document provides comprehensive API reference for all Firefly Common Core components with real method signatures and practical examples.

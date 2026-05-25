@@ -1,13 +1,13 @@
 # Firefly Common Core - Overview
 
-**Copyright (c) 2025 Firefly Software Solutions Inc**  
+**Copyright (c) 2025 Firefly Software Foundation**  
 *Licensed under the Apache License, Version 2.0*
 
 ## What is Firefly Common Core?
 
 Firefly Common Core is a Spring Boot library providing utilities, configuration, and shared infrastructure components for the **core-infrastructure layer** of the **Firefly Framework**.
 
-Developed by **Firefly Software Solutions Inc**, this library serves as the foundational infrastructure layer for enterprise and mission-critical applications, complementing the [fireflyframework-domain](../../fireflyframework-domain/) library which handles domain-layer concerns.
+Developed by **Firefly Software Foundation**, this library serves as the foundational infrastructure layer for enterprise and mission-critical applications, complementing the [fireflyframework-domain](../../fireflyframework-domain/) library which handles domain-layer concerns.
 
 ### Platform Context
 

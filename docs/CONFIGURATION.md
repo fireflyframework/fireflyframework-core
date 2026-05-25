@@ -1,7 +1,7 @@
 # Configuration Reference
 
 **Firefly Common Core Library**  
-*Copyright (c) 2025 Firefly Software Solutions Inc*  
+*Copyright (c) 2025 Firefly Software Foundation*  
 *Licensed under the Apache License, Version 2.0*
 
 This document provides a complete reference of all configuration options available in Firefly Common Core, organized by component and feature area.
