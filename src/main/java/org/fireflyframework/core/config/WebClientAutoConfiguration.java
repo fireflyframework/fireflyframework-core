@@ -71,7 +71,7 @@ import static org.fireflyframework.core.config.TransactionFilter.TRANSACTION_ID_
 @Slf4j
 @AutoConfiguration(after = WebClientResilienceAutoConfiguration.class)
 @ConditionalOnProperty(name = "firefly.webclient.enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties(WebClientProperties.class)
+@EnableConfigurationProperties({WebClientProperties.class, HeaderPropagationProperties.class})
 public class WebClientAutoConfiguration {
 
     private final CircuitBreakerRegistry circuitBreakerRegistry;
@@ -97,6 +97,25 @@ public class WebClientAutoConfiguration {
     }
 
     /**
+     * WebFilter that captures the allow-listed inbound headers into the reactive context.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    HeaderPropagationWebFilter headerPropagationWebFilter(HeaderPropagationProperties properties) {
+        return new HeaderPropagationWebFilter(properties);
+    }
+
+    /**
+     * Reusable outbound filter that re-applies the captured inbound headers. Exposed as a bean
+     * so SDK-generated {@code ApiClient} WebClients can attach it too.
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    HeaderPropagationExchangeFilter headerPropagationExchangeFilter() {
+        return new HeaderPropagationExchangeFilter();
+    }
+
+    /**
      * Creates a WebClient bean with transaction ID propagation, advanced configuration options,
      * and resilience capabilities.
      *
@@ -104,8 +123,8 @@ public class WebClientAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    WebClient webClient() {
-        // Create a WebClient.Builder with transaction ID propagation
+    WebClient webClient(HeaderPropagationExchangeFilter headerPropagationExchangeFilter) {
+        // Create a WebClient.Builder with transaction ID + allow-listed header propagation
         WebClient.Builder builder = WebClient.builder()
                 .filter((request, next) ->
                         Mono.deferContextual(ctx -> {
@@ -117,7 +136,8 @@ public class WebClientAutoConfiguration {
                                 return next.exchange(newRequest);
                             }
                             return next.exchange(request);
-                        }));
+                        }))
+                .filter(headerPropagationExchangeFilter);
 
         // Apply advanced configuration options
         try {
@@ -149,8 +169,8 @@ public class WebClientAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    WebClient.Builder webClientBuilder() {
-        // Create a WebClient.Builder with transaction ID propagation
+    WebClient.Builder webClientBuilder(HeaderPropagationExchangeFilter headerPropagationExchangeFilter) {
+        // Create a WebClient.Builder with transaction ID + allow-listed header propagation
         WebClient.Builder builder = WebClient.builder()
                 .filter((request, next) ->
                         Mono.deferContextual(ctx -> {
@@ -162,7 +182,8 @@ public class WebClientAutoConfiguration {
                                 return next.exchange(newRequest);
                             }
                             return next.exchange(request);
-                        }));
+                        }))
+                .filter(headerPropagationExchangeFilter);
 
         // Apply advanced configuration options
         try {
